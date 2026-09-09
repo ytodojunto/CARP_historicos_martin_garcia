@@ -1,1 +1,31 @@
+name: Descubrir ZIPs historicos CARP
 
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  descubrir:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Instalar dependencias
+        run: pip install requests
+
+      - name: Descubrir ZIPs historicos
+        run: python descubrir_zips.py
+
+      - name: Guardar resultado en el repo
+        run: |
+          git config user.name 'carp-capture-bot'
+          git config user.email 'bot@users.noreply.github.com'
+          git add data/
+          git diff --staged --quiet || git commit -m 'Descubrimiento de ZIPs historicos CARP'
+          git push
